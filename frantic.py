@@ -3,6 +3,8 @@
 ###############
 # A game demonstrating the use of classes
 
+from tkinter import *
+
 #class definitions
 class Circle:
     """ There'll be 4 types of circles:
@@ -28,20 +30,40 @@ class Circle:
     
     def draw(self, canvas):
         """ Draws circle on canvas """
-        canvas.create_oval(self.rect(self.x, self.y), fill = self.fill_color
-                           width = outline, outline = outline_color)
+        canvas.create_oval(self.rect(self.x, self.y), fill = self.fill_color,
+                           width = self.outline, outline = self.outline_color)
 
     def update(self, canvas, x, y):
         """ Updates circle's coordinates, x, y represent new center """
         canvas.coords(self, self.rect(x, y))
 
 class GameField(Canvas):
-    """ Implements a canvas in the frame """
+    """ Implements a canvas in the application frame """
 
-    def __init__(self, parent, ro, co, color):
+    def __init__(self, parent, ro, co, size, color):
         """ Mandatory arguments are:
             parent: parent-widget
             ro, co: grid-coordinates
             color: canvas background color """
-        super().__init__(parent, bg = color)
+        super().__init__(parent, width = size, height = size, bg = color)
         self.grid(row = ro, column = co)
+
+class Frantic(Frame):
+    """ Main application """
+
+    def __init__(self, parent = None):
+        super().__init__(parent)
+        self.grid()
+        
+def testApp():
+    """ Test facility """
+    w = Tk()
+    app = Frantic(w)
+    can = GameField(app, 0, 0, 600, "ivory")
+    cir = Circle(300, 300, 50, 2, "red", "blue")
+    cir.draw(can)
+    w.mainloop()
+
+if __name__ == "__main__":
+    testApp()
+        
