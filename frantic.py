@@ -34,3 +34,14 @@ class Circle:
     def update(self, canvas, x, y):
         """ Updates circle's coordinates, x, y represent new center """
         canvas.coords(self, self.rect(x, y))
+
+class GameField(Canvas):
+    """ Implements a canvas in the frame """
+
+    def __init__(self, parent, ro, co, color):
+        """ Mandatory arguments are:
+            parent: parent-widget
+            ro, co: grid-coordinates
+            color: canvas background color """
+        super().__init__(parent, bg = color)
+        self.grid(row = ro, column = co)
