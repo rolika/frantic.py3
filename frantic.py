@@ -33,9 +33,9 @@ class Circle:
     def draw(self, canvas):
         """ Draws circle on canvas """
         self.circle = canvas.create_oval(self.rect(self.x, self.y),
-                                             fill = self.fill_color,
-                                             width = self.outline,
-                                             outline = self.outline_color)
+                                         fill = self.fill_color,
+                                         width = self.outline,
+                                         outline = self.outline_color)
 
     def fresh(self, canvas, x, y):
         """ Updates circle's coordinates, x, y represent new center """
@@ -73,12 +73,13 @@ class GameField(Canvas):
         self.size = size
         self.grid(row = ro, column = co, columnspan = 3)
         self.initElements()
+        self.bind("<Motion>", self.moveCrossHair)
 
     def initElements(self):
         """ Inits game elements """
         self.ball = Circle(self.size / 2, self.size / 2, self.size / 20,
                            1, "blue", "blue")
-        self.cross = Circle(self.size / 2, self.size / 2, self.size / 20,
+        self.sight = Circle(self.size / 2, self.size / 2, self.size / 20,
                             1, "green", None)
         self.hit = Circle(self.size / 2, self.size / 2, self.size / 20,
                           1, "red", "red")
@@ -88,6 +89,16 @@ class GameField(Canvas):
                                1, "green") #horizontal crosshair
         self.vertical = Line(self.size / 2, 0, self.size / 2, self.size,
                              1, "green") #vertical crosshair
+        self.ball.draw(self)
+        self.sight.draw(self)
+        self.horizontal.draw(self)
+        self.vertical.draw(self)
+    
+    def moveCrossHair(self, event):
+        """ Crosshair follows mouse movement """
+        self.sight.fresh(self, event.x, event.y)
+        self.horizontal.fresh(self, 0, event.y, self.size, event.y)
+        self.vertical.fresh(self, event.x, 0, event.x, self.size)
 
 class Frantic(Frame):
     """ Main application """
@@ -101,8 +112,8 @@ class Frantic(Frame):
     def setWidgets(self):
         """ Places widgets """
         self.canvas = GameField(self, 0, 0, 600, "ivory")
-        Label(self,text = "Hitrate:").grid(row = 1, column = 0)
         self.hitrate = StringVar()
+        Label(self,text = "Hitrate:").grid(row = 1, column = 0)
         Label(self, textvariable = self.hitrate).grid(row = 1, column = 1)
         Button(self, text = "Reset", command = None).grid(row = 1, column = 2)
 
