@@ -6,6 +6,7 @@
 # A game demonstrating the use of classes
 
 from tkinter import *
+import random, math
 
 #class definitions
 class Circle:
@@ -93,12 +94,24 @@ class GameField(Canvas):
         self.sight.draw(self)
         self.horizontal.draw(self)
         self.vertical.draw(self)
+        self.moveBall()
     
     def moveCrossHair(self, event):
         """ Crosshair follows mouse movement """
         self.sight.fresh(self, event.x, event.y)
         self.horizontal.fresh(self, 0, event.y, self.size, event.y)
         self.vertical.fresh(self, event.x, 0, event.x, self.size)
+        
+    def moveBall(self):
+        """ Moves ball in a random direction """
+        direction, displace = math.radians(random.randrange(359)), 5
+        x_displace = math.sin(direction) * displace
+        y_displace = math.cos(direction) * displace
+        self.ball.x += x_displace
+        self.ball.y += y_displace 
+        self.ball.fresh(self, self.ball.x, self.ball.y)
+        self.after(10, self.moveBall) #delay in milliseconds
+        
 
 class Frantic(Frame):
     """ Main application """
