@@ -70,14 +70,41 @@ class GameField(Canvas):
             ro, co: grid-coordinates
             color: canvas background color """
         super().__init__(parent, width = size, height = size, bg = color)
-        self.grid(row = ro, column = co)
+        self.size = size
+        self.grid(row = ro, column = co, columnspan = 3)
+        self.initElements()
+
+    def initElements(self):
+        """ Inits game elements """
+        self.ball = Circle(self.size / 2, self.size / 2, self.size / 20,
+                           1, "blue", "blue")
+        self.cross = Circle(self.size / 2, self.size / 2, self.size / 20,
+                            1, "green", None)
+        self.hit = Circle(self.size / 2, self.size / 2, self.size / 20,
+                          1, "red", "red")
+        self.miss = Circle(self.size / 2, self.size / 2, self.size / 20,
+                           2, "blue", None)
+        self.horizontal = Line(0, self.size / 2, self.size, self.size / 2,
+                               1, "green") #horizontal crosshair
+        self.vertical = Line(self.size / 2, 0, self.size / 2, self.size,
+                             1, "green") #vertical crosshair
 
 class Frantic(Frame):
     """ Main application """
 
     def __init__(self, parent = None):
         super().__init__(parent)
+        self.master.title("FRANTIC")
+        self.setWidgets()
         self.grid()
+
+    def setWidgets(self):
+        """ Places widgets """
+        self.canvas = GameField(self, 0, 0, 600, "ivory")
+        Label(self,text = "Hitrate:").grid(row = 1, column = 0)
+        self.hitrate = StringVar()
+        Label(self, textvariable = self.hitrate).grid(row = 1, column = 1)
+        Button(self, text = "Reset", command = None).grid(row = 1, column = 2)
 
 def testApp():
     """ Test facility """
@@ -91,4 +118,4 @@ def testApp():
     w.mainloop()
 
 if __name__ == "__main__":
-    testApp()
+    Frantic().mainloop()
