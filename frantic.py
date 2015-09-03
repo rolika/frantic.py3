@@ -14,7 +14,7 @@ class Circle:
         2. a simple circle, the middle of the cross-hair
         3. a filled circle, representing a hit
         4. another simple circle, representing a miss """
-    
+
     def __init__(self, x, y, radius, outline, outline_color, fill_color):
         """ Mandatory arguments are:
            x, y: coords of center point
@@ -32,12 +32,34 @@ class Circle:
 
     def draw(self, canvas):
         """ Draws circle on canvas """
-        canvas.create_oval(self.rect(self.x, self.y), fill = self.fill_color,
-                           width = self.outline, outline = self.outline_color)
+        self.circle = canvas.create_oval(self.rect(self.x, self.y),
+                                             fill = self.fill_color,
+                                             width = self.outline,
+                                             outline = self.outline_color)
 
-    def update(self, canvas, x, y):
+    def fresh(self, canvas, x, y):
         """ Updates circle's coordinates, x, y represent new center """
-        canvas.coords(self, self.rect(x, y))
+        canvas.coords(self.circle, self.rect(x, y))
+
+class Line:
+    """ Line object for cross-hair """
+
+    def __init__(self, x0, y0, x1, y1, width_, color):
+        """ Mandatory arguments are:
+            x-y: starting & ending coordinates
+            width_: line's width
+            color: line's color """
+        self.x0, self.y0, self.x1, self.y1 = x0, y0, x1, y1
+        self.width_, self.color = width_, color
+
+    def draw(self, canvas):
+        """ Draws line on canvas """
+        self.line = canvas.create_line(self.x0, self.y0, self.x1, self.y1,
+                                       width = self.width_, fill = self.color)
+
+    def fresh(self, canvas, x0, y0, x1, y1):
+        """ Updates line's coordinates """
+        canvas.coords(self.line, x0, y0, x1, y1)
 
 class GameField(Canvas):
     """ Implements a canvas in the application frame """
@@ -64,6 +86,8 @@ def testApp():
     can = GameField(app, 0, 0, 600, "ivory")
     cir = Circle(300, 300, 50, 2, "red", "blue")
     cir.draw(can)
+    lin = Line(0,300, 600, 300, 2, "blue")
+    lin.draw(can)
     w.mainloop()
 
 if __name__ == "__main__":
