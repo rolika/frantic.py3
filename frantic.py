@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 ###############
 ### FRANTIC ###
 ###############
@@ -27,7 +29,7 @@ class Circle:
         """ Returns circle's bounding rectangle's coordinates """
         return x - self.radius, y - self.radius, \
                x + self.radius, y + self.radius
-    
+
     def draw(self, canvas):
         """ Draws circle on canvas """
         canvas.create_oval(self.rect(self.x, self.y), fill = self.fill_color,
@@ -54,7 +56,7 @@ class Frantic(Frame):
     def __init__(self, parent = None):
         super().__init__(parent)
         self.grid()
-        
+
 def testApp():
     """ Test facility """
     w = Tk()
@@ -66,4 +68,3 @@ def testApp():
 
 if __name__ == "__main__":
     testApp()
-        
