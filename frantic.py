@@ -68,10 +68,11 @@ class GameField(Canvas):
             ro, co: grid-coordinates
             color: canvas background color """
         super().__init__(parent, width = size, height = size, bg = color)
-        self.size = size
+        self.size, self.parent = size, parent
         self.grid(row = ro, column = co, columnspan = 3)
         self.initElements()
         self.bind("<Motion>", self.moveCrossHair)
+        self.bind("<Button-1>", self.checkHit)
 
     def initElements(self):
         """ Inits game elements """
@@ -121,7 +122,18 @@ class GameField(Canvas):
         self.ball.y = self.getCoord(self.ball.y, direction, displace, math.cos)
         self.ball.fresh(self, self.ball.x, self.ball.y)
         self.after(10, self.moveBall) #delay in milliseconds
-        
+    
+    def checkHit(self, event):
+        """ Checks if crosshair was on ball at left-click """
+        distance = math.sqrt((event.x - self.ball.x)**2 + \
+                             (event.y - self.ball.y)**2) #to ball's center
+        if distance <= self.ball.radius: #within ball
+            self.parent.hit += 1
+        else:
+            self.parent.miss += 1
+        total = self.parent.hit + self.parent.miss #all clicks
+        self.parent.hitrate.set("{:.2%}".format(self.parent.hit / total))
+            
 class Frantic(Frame):
     """ Main application """
 
@@ -130,14 +142,20 @@ class Frantic(Frame):
         self.master.title("FRANTIC")
         self.setWidgets()
         self.grid()
+        self.newGame()
 
     def setWidgets(self):
         """ Places widgets """
-        self.canvas = GameField(self, 0, 0, 600, "ivory")
         self.hitrate = StringVar()
+        self.canvas = GameField(self, 0, 0, 600, "ivory")
         Label(self,text = "Hitrate:").grid(row = 1, column = 0)
         Label(self, textvariable = self.hitrate).grid(row = 1, column = 1)
         Button(self, text = "Reset", command = self.canvas.initBall).grid(row = 1, column = 2)
+    
+    def newGame(self):
+        """ Starts a new game """
+        self.hitrate.set("0.00%")
+        self.hit, self.miss = 0, 0
 
 def testApp():
     """ Test facility """
