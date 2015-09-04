@@ -17,11 +17,10 @@ class Circle:
         4. another simple circle, representing a miss """
 
     def __init__(self, x, y, radius, outline, outline_color, fill_color):
-        """ Mandatory arguments are:
-           x, y: coords of center point
-           radius: radius of circle
-           outline, outline_color: outline width & color
-           fill_color: filling color of circle, if any """
+        """ x, y: coords of center point
+            radius: radius of circle
+            outline, outline_color: outline width & color
+            fill_color: filling color of circle, if any """
         self.x, self.y, self.radius = x, y, radius
         self.outline, self.outline_color = outline, outline_color
         self.fill_color = fill_color
@@ -46,8 +45,7 @@ class Line:
     """ Line object for cross-hair """
 
     def __init__(self, x0, y0, x1, y1, width_, color):
-        """ Mandatory arguments are:
-            x-y: starting & ending coordinates
+        """ x-y: starting & ending coordinates
             width_: line's width
             color: line's color """
         self.x0, self.y0, self.x1, self.y1 = x0, y0, x1, y1
@@ -66,8 +64,7 @@ class GameField(Canvas):
     """ Implements a canvas in the application frame """
 
     def __init__(self, parent, ro, co, size, color):
-        """ Mandatory arguments are:
-            parent: parent-widget
+        """ parent: parent-widget
             ro, co: grid-coordinates
             color: canvas background color """
         super().__init__(parent, width = size, height = size, bg = color)
