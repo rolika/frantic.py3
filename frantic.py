@@ -104,21 +104,21 @@ class GameField(Canvas):
         self.horizontal.fresh(self, 0, event.y, self.size, event.y)
         self.vertical.fresh(self, event.x, 0, event.x, self.size)
 
+    def getCoord(self, coord, direction, displace, trig):
+        """ Returns new coordinate """
+        displace = trig(direction) * displace
+        coord += displace
+        if coord < self.ball.radius:
+            coord = self.ball.radius
+        if coord > self.size - self.ball.radius:
+            coord = self.size - self.ball.radius
+        return coord
+
     def moveBall(self):
         """ Moves ball in a random direction """
         direction, displace = math.radians(random.randrange(359)), 5
-        x_displace = math.sin(direction) * displace
-        self.ball.x += x_displace
-        if self.ball.x < self.ball.radius:
-            self.ball.x = self.ball.radius
-        if self.ball.x > self.size - self.ball.radius:
-            self.ball.x = self.size - self.ball.radius
-        y_displace = math.cos(direction) * displace
-        self.ball.y += y_displace 
-        if self.ball.y < self.ball.radius:
-            self.ball.y = self.ball.radius
-        if self.ball.y > self.size - self.ball.radius:
-            self.ball.y = self.size - self.ball.radius
+        self.ball.x = self.getCoord(self.ball.x, direction, displace, math.sin)
+        self.ball.y = self.getCoord(self.ball.y, direction, displace, math.cos)
         self.ball.fresh(self, self.ball.x, self.ball.y)
         self.after(10, self.moveBall) #delay in milliseconds
         
