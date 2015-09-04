@@ -24,6 +24,7 @@ class Circle:
         self.x, self.y, self.radius = x, y, radius
         self.outline, self.outline_color = outline, outline_color
         self.fill_color = fill_color
+        self.circle = None
 
     def rect(self, x, y):
         """ Returns circle's bounding rectangle's coordinates """
@@ -76,7 +77,8 @@ class GameField(Canvas):
 
     def initElements(self):
         """ Inits game elements """
-        self.ball = None
+        self.ball = Circle(self.size / 2, self.size / 2, self.size / 20,
+                           1, "blue", "blue")
         self.sight = Circle(self.size / 2, self.size / 2, self.size / 20,
                             1, "green", None)
         self.horizontal = Line(0, self.size / 2, self.size, self.size / 2,
@@ -91,7 +93,7 @@ class GameField(Canvas):
 
     def initBall(self):
         """ Separate ball initialization because of respawn after hit """
-        self.delete(self.ball)
+        self.delete(self.ball.circle)
         self.ball = Circle(self.size / 2, self.size / 2, self.size / 20,
                            1, "blue", "blue")
         self.ball.draw(self)
@@ -125,13 +127,13 @@ class GameField(Canvas):
         distance = math.sqrt((event.x - self.ball.x)**2 + \
                              (event.y - self.ball.y)**2) #to ball's center
         if distance <= self.ball.radius: #within ball
-            hit = Circle(event.x, event.y, self.size / 20, 1, "red", "red")
+            hit = Circle(event.x, event.y, self.size / 20, 1, "green", "green")
             hit.draw(self)
             self.parent.hit += 1
             self.create_text(event.x, event.y, text = str(self.parent.hit))
             self.initBall()
         else:
-            miss = Circle(event.x, event.y, self.size / 20, 2, "blue", None)
+            miss = Circle(event.x, event.y, self.size / 30, 1, "red", "red")
             miss.draw(self)
             self.parent.miss += 1
             self.create_text(event.x, event.y, text = str(self.parent.miss))
@@ -152,12 +154,17 @@ class Frantic(Frame):
         """ Places widgets """
         self.hitrate = StringVar()
         self.canvas = GameField(self, 0, 0, 600, "ivory")
-        Label(self,text = "Hitrate:").grid(row = 1, column = 0)
-        Label(self, textvariable = self.hitrate).grid(row = 1, column = 1)
-        Button(self, text = "Reset", command = self.canvas.initBall).grid(row = 1, column = 2)
+        Label(self, text = "Hitrate:", anchor = E).\
+            grid(row = 1, column = 0, sticky = EW)
+        Label(self, textvariable = self.hitrate, anchor = W).\
+            grid(row = 1, column = 1, sticky = EW)
+        Button(self, text = "Restart", command = self.newGame).\
+            grid(row = 1, column = 2, sticky = EW)
     
     def newGame(self):
         """ Starts a new game """
+        self.canvas.destroy()
+        self.canvas = GameField(self, 0, 0, 600, "ivory")
         self.hitrate.set("0.00%")
         self.hit, self.miss = 0, 0
 
