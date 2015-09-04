@@ -79,10 +79,6 @@ class GameField(Canvas):
         self.ball = None
         self.sight = Circle(self.size / 2, self.size / 2, self.size / 20,
                             1, "green", None)
-        self.hit = Circle(self.size / 2, self.size / 2, self.size / 20,
-                          1, "red", "red")
-        self.miss = Circle(self.size / 2, self.size / 2, self.size / 20,
-                           2, "blue", None)
         self.horizontal = Line(0, self.size / 2, self.size, self.size / 2,
                                1, "green") #horizontal crosshair
         self.vertical = Line(self.size / 2, 0, self.size / 2, self.size,
@@ -95,6 +91,7 @@ class GameField(Canvas):
 
     def initBall(self):
         """ Separate ball initialization because of respawn after hit """
+        self.delete(self.ball)
         self.ball = Circle(self.size / 2, self.size / 2, self.size / 20,
                            1, "blue", "blue")
         self.ball.draw(self)
@@ -117,7 +114,7 @@ class GameField(Canvas):
 
     def moveBall(self):
         """ Moves ball in a random direction """
-        direction, displace = math.radians(random.randrange(359)), 5
+        direction, displace = math.radians(random.randrange(359)), 7
         self.ball.x = self.getCoord(self.ball.x, direction, displace, math.sin)
         self.ball.y = self.getCoord(self.ball.y, direction, displace, math.cos)
         self.ball.fresh(self, self.ball.x, self.ball.y)
@@ -128,9 +125,16 @@ class GameField(Canvas):
         distance = math.sqrt((event.x - self.ball.x)**2 + \
                              (event.y - self.ball.y)**2) #to ball's center
         if distance <= self.ball.radius: #within ball
+            hit = Circle(event.x, event.y, self.size / 20, 1, "red", "red")
+            hit.draw(self)
             self.parent.hit += 1
+            self.create_text(event.x, event.y, text = str(self.parent.hit))
+            self.initBall()
         else:
+            miss = Circle(event.x, event.y, self.size / 20, 2, "blue", None)
+            miss.draw(self)
             self.parent.miss += 1
+            self.create_text(event.x, event.y, text = str(self.parent.miss))
         total = self.parent.hit + self.parent.miss #all clicks
         self.parent.hitrate.set("{:.2%}".format(self.parent.hit / total))
             
