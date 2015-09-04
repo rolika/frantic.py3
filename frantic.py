@@ -78,8 +78,7 @@ class GameField(Canvas):
 
     def initElements(self):
         """ Inits game elements """
-        self.ball = Circle(self.size / 2, self.size / 2, self.size / 20,
-                           1, "blue", "blue")
+        self.ball = None
         self.sight = Circle(self.size / 2, self.size / 2, self.size / 20,
                             1, "green", None)
         self.hit = Circle(self.size / 2, self.size / 2, self.size / 20,
@@ -90,18 +89,24 @@ class GameField(Canvas):
                                1, "green") #horizontal crosshair
         self.vertical = Line(self.size / 2, 0, self.size / 2, self.size,
                              1, "green") #vertical crosshair
-        self.ball.draw(self)
         self.sight.draw(self)
         self.horizontal.draw(self)
         self.vertical.draw(self)
+        self.initBall()
         self.moveBall()
+
+    def initBall(self):
+        """ Separate ball initialization because of respawn after hit """
+        self.ball = Circle(self.size / 2, self.size / 2, self.size / 20,
+                           1, "blue", "blue")
+        self.ball.draw(self)
     
     def moveCrossHair(self, event):
         """ Crosshair follows mouse movement """
         self.sight.fresh(self, event.x, event.y)
         self.horizontal.fresh(self, 0, event.y, self.size, event.y)
         self.vertical.fresh(self, event.x, 0, event.x, self.size)
-        
+
     def moveBall(self):
         """ Moves ball in a random direction """
         direction, displace = math.radians(random.randrange(359)), 5
@@ -120,7 +125,6 @@ class GameField(Canvas):
         self.ball.fresh(self, self.ball.x, self.ball.y)
         self.after(10, self.moveBall) #delay in milliseconds
         
-
 class Frantic(Frame):
     """ Main application """
 
@@ -136,7 +140,7 @@ class Frantic(Frame):
         self.hitrate = StringVar()
         Label(self,text = "Hitrate:").grid(row = 1, column = 0)
         Label(self, textvariable = self.hitrate).grid(row = 1, column = 1)
-        Button(self, text = "Reset", command = None).grid(row = 1, column = 2)
+        Button(self, text = "Reset", command = self.canvas.initBall).grid(row = 1, column = 2)
 
 def testApp():
     """ Test facility """
