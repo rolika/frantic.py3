@@ -77,6 +77,7 @@ class GameField(Canvas):
 
     def initElements(self):
         """ Inits game elements """
+        self.speed, self.displace = 10, 6 #balls speed (millisecond) & displace
         self.ball = Circle(self.size / 2, self.size / 2, self.size / 20,
                            1, "blue", "blue")
         self.sight = Circle(self.size / 2, self.size / 2, self.size / 20,
@@ -116,11 +117,11 @@ class GameField(Canvas):
 
     def moveBall(self):
         """ Moves ball in a random direction """
-        direction, displace = math.radians(random.randrange(359)), 7
-        self.ball.x = self.getCoord(self.ball.x, direction, displace, math.sin)
-        self.ball.y = self.getCoord(self.ball.y, direction, displace, math.cos)
+        direction = math.radians(random.randrange(359))
+        self.ball.x = self.getCoord(self.ball.x, direction, self.displace, math.sin)
+        self.ball.y = self.getCoord(self.ball.y, direction, self.displace, math.cos)
         self.ball.fresh(self, self.ball.x, self.ball.y)
-        self.after(10, self.moveBall) #delay in milliseconds
+        self.after(self.speed, self.moveBall) #delay in milliseconds
     
     def checkHit(self, event):
         """ Checks if crosshair was on ball at left-click """
@@ -131,6 +132,10 @@ class GameField(Canvas):
             hit.draw(self)
             self.parent.hit += 1
             self.create_text(event.x, event.y, text = str(self.parent.hit))
+            if self.speed > 1: #increase speed
+                self.speed -= 1
+            else: #if speed increase exhausted,
+                self.displace += 1 #increase displacement
             self.initBall()
         else:
             miss = Circle(event.x, event.y, self.size / 30, 1, "red", "red")
