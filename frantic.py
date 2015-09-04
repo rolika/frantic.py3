@@ -106,9 +106,17 @@ class GameField(Canvas):
         """ Moves ball in a random direction """
         direction, displace = math.radians(random.randrange(359)), 5
         x_displace = math.sin(direction) * displace
-        y_displace = math.cos(direction) * displace
         self.ball.x += x_displace
+        if self.ball.x < self.ball.radius:
+            self.ball.x = self.ball.radius
+        if self.ball.x > self.size - self.ball.radius:
+            self.ball.x = self.size - self.ball.radius
+        y_displace = math.cos(direction) * displace
         self.ball.y += y_displace 
+        if self.ball.y < self.ball.radius:
+            self.ball.y = self.ball.radius
+        if self.ball.y > self.size - self.ball.radius:
+            self.ball.y = self.size - self.ball.radius
         self.ball.fresh(self, self.ball.x, self.ball.y)
         self.after(10, self.moveBall) #delay in milliseconds
         
